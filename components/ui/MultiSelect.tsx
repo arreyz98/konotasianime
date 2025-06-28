@@ -63,7 +63,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         >
           <div className="flex gap-1 flex-wrap w-full">
             {selectedValues.length > 0 ? (
-              selectedValues.map((val, index) => (
+              selectedValues.map((val) => (
                 <Badge
                   key={val}
                   className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-black dark:bg-gray-700 dark:text-white rounded-md"
