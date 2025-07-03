@@ -20,7 +20,7 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          String          @default("user")
+  role          String          @default("admin")
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
@@ -59,13 +59,13 @@ model Session {
   updatedAt DateTime @updatedAt
 }
  
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
+// model VerificationToken {
+//   identifier String
+//   token      String
+//   expires    DateTime
  
-  @@id([identifier, token])
-}
+//   @@id([identifier, token])
+// }
 
 model Post {
   id          String    @id @default(uuid())

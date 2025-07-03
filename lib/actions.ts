@@ -32,7 +32,7 @@ export const signUpCredentials = async(prevState : unknown, formData : FormData)
             }
         })
     } catch  {
-        return { message : "Registrasi gagal, Akun sudah terdaftar"}
+        return { message : "Registrasi gagal, Akun sudah terdaftar",}
     }
     redirect("/login");
 }
@@ -53,7 +53,7 @@ const validatedFields = LoginSchema.safeParse(Object.fromEntries(formData.entrie
     const {email , password } = validatedFields.data
 
     try {
-        await signIn('credentials',{email,password, redirectTo : "/dashboard"} )
+        await signIn('credentials',{email,password, redirectTo : "/admin"} )
     } catch (error) {
         if(error instanceof AuthError){
             switch (error.type) {

@@ -1,4 +1,5 @@
 'use client';
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -19,24 +20,25 @@ const adminSideBarLinks = [
   },
   {
     icon: <UsersRound />,
-    route: "/admin/books",
+    route: "/admin/list-admin",
     text: "List Admin",
   },
   {
     icon: <Settings />,
-    route: "/admin/book-requests",
-    text: "Settings",
+    route: "/admin/options",
+    text: "Options",
   },
 ];
 
-export default function Sidebar() {
+interface sessionUser  {
+  name? : string | null;
+  email? : string | null;
+}
 
+const Sidebar:React.FC<sessionUser> = ({name , email}) => {
   const pathname = usePathname();
-   
-  
   return (
     <div className="sticky left-0 top-0 flex h-dvh flex-col  bg-white px-5 pb-5 pt-5 " >
-
       <div className="flex flex-row items-center gap-2 border-b border-dashed  pb-10 max-md:justify-center">
         <Image src="/images/logo-admin.jpg" alt="logo" height={48} width={48} />
         <h1 className=" text-2xl font-semibold text-[#25388C] max-md:hidden">Admin Dashboard</h1>
@@ -69,11 +71,13 @@ export default function Sidebar() {
           </AvatarFallback>
         </Avatar>
          <div className="flex flex-col max-md:hidden ml-2">
-          <p className="font-semibold text-[#3A354E]">Arreyz</p>
-          <p className="text-xs text-[#8D8D8D]">@arreyz98@gmail.com</p>
+          <p className="font-semibold text-[#3A354E]">{name}</p>
+          <p className="text-xs text-[#8D8D8D]">{email}</p>
         </div>
       </div>
 
     </div>
   );
 }
+
+export default Sidebar;

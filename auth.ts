@@ -9,7 +9,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session : {strategy : "jwt"},
   pages : {
-    signIn : "/login"
+    signIn : "/login",
+    signOut : "/login"
   },
   providers: [
     Credentials({
@@ -40,4 +41,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
     })
   ],
+  callbacks:{
+    authorized({ auth, request:{ nextUrl} }){
+      const isLoggedIn = auth?.user;
+      const protectedRoutes = ["/admin","/admin/posts"]; //Halaman yang harus login terlebih dahulu
+      if(!isLoggedIn && protectedRoutes.includes(nextUrl.pathname)){
+        return Response.redirect(new URL("/login", nextUrl));
+      }
+      if(isLoggedIn && nextUrl.pathname.startsWith("/login")){
+        return Response.redirect(new URL("/admin", nextUrl))
+      }
+      return true;
+    },
+    jwt({token , user}) {
+        if(user) token.role = user.role;
+        return token  
+    },
+    session({session,token}) {
+        session.user.id = token.sub
+        session.user.role = token.role
+        return session;
+    },
+  }
+
 })

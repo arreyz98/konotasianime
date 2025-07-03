@@ -12,7 +12,6 @@ export default function Page() {
     }
   return (
     <div>
-      
       <div className="relative mx-auto px-4 py-8 sm:px-6 lg:px-8 h-[500px] sm:h-[600px]">
           <Image src={"https://static1.animekai.to/77/i/4/06/67eea38e0d3a9.jpg"} fill alt="test" className="object-cover brightness-[50%]" />
           <div className="absolute top-10 sm:top-30 w-[400px] sm:w-[1000px]">

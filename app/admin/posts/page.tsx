@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Tables from "@/components/admin/Tables";
+import PostTable from "@/components/admin/PostTable";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
@@ -28,7 +28,7 @@ const Page = () => {
                         className="min-h-12 w-1/4 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none"
                     />              
                     </div>
-                <Tables />
+                <PostTable />
             </div>
         </section>
     )
