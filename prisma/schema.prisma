@@ -21,59 +21,49 @@ model User {
   image         String?
   password      String?
   role          String          @default("admin")
-  accounts      Account[]
-  sessions      Session[]
   posts         Post[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
  
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  @@id([provider, providerAccountId])
-}
- 
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
- 
-// model VerificationToken {
-//   identifier String
-//   token      String
-//   expires    DateTime
- 
-//   @@id([identifier, token])
-// }
-
 model Post {
-  id          String    @id @default(uuid())
-  title       String
-  deskripsi   String
-  image       String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  userId      String
+  id              String    @id @default(uuid())
+  title           String
+  slug            String
+  deskripsi       String
+  release         String
+  rating          String
+  imagePoster     String
+  imageBanner     String
+  source          String[]
+  genre           String[]
+  studio          String[]
+  postVideo       PostVideo[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  userId          String
   user  User @relation(fields: [userId], references: [id] , onDelete: Cascade)
-} 
+}
+
+model PostVideo{
+  id              String @id @default(uuid())
+  title           String
+  deskripsi       String
+  linkVideo       String
+  duration        String
+  episode         Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  postId          String
+  post  Post @relation(fields: [postId], references: [id] , onDelete: Cascade)
+}
+
+model Genre {
+  id    String @id @default(uuid())
+  name  String
+}
+
+model Studio {
+  id    String @id @default(uuid())
+  name  String
+}

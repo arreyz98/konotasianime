@@ -19,10 +19,12 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import DataNotFound from "./DataNotFound";
-import { getUsers } from "@/lib/data";
+import { getGenres, getUsers } from "@/lib/data";
 
 const AdminTables = async() => {
     const users = await getUsers() 
+    const test = await getGenres()
+    console.log(test);
     return(
         <div className="w-full">
       <div className="w-full border rounded-md overflow-hidden">

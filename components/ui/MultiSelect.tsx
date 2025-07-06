@@ -18,8 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 
 interface Option {
-  value: string;
-  label: string;
+  id: string;
+  name: string;
 }
 
 interface MultiSelectProps {
@@ -39,7 +39,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   const [inputValue, setInputValue] = useState("");
 
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(inputValue.toLowerCase())
+    option.name.toLowerCase().includes(inputValue.toLowerCase())
   );
 
   const toggleSelection = (value: string) => {
@@ -53,6 +53,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   const removeSelected = (value: string) => {
     setSelectedValues(selectedValues.filter((item) => item !== value));
   };
+
+function capitalizeFirstLetter(input: string): string {
+  if (!input) return input; // Handle empty strings
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
 
   return (
     <Popover  open={open} onOpenChange={setOpen}>
@@ -68,7 +73,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   key={val}
                   className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-black dark:bg-gray-700 dark:text-white rounded-md"
                 >
-                  {options.find((opt) => opt.value === val)?.label}
+                  {options.find((opt) => opt.name === val)?.name}
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
@@ -107,11 +112,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               <CommandEmpty>No options found.</CommandEmpty>
             ) : (
               filteredOptions.map((option) => {
-                const isSelected = selectedValues.includes(option.value);
+                const isSelected = selectedValues.includes(option.name);
                 return (
                   <CommandItem
-                    key={option.value}
-                    onSelect={() => toggleSelection(option.value)}
+                    key={option.name}
+                    onSelect={() => toggleSelection(option.name)}
                   >
                     <div className="flex items-center">
                       <Check
@@ -119,7 +124,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                           isSelected ? "opacity-100" : "opacity-0"
                         }`}
                       />
-                      {option.label}
+                      {capitalizeFirstLetter(option.name)}
                     </div>
                   </CommandItem>
                 );

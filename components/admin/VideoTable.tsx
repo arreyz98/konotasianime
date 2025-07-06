@@ -8,17 +8,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import {FileVideo, Eye, Pencil} from "lucide-react";
+import {Eye, Pencil} from "lucide-react";
 import DataNotFound from "./DataNotFound";
 import { formatDate } from "@/lib/utils";
-import { getPosts } from "@/lib/data";
-import DeletePostBtn from "./DeletePostBtn";
+import { getPostVideo } from "@/lib/data";
+import DeletePostVideoBtn from "./DeletePostVideoBtn";
 
 
-const PostTable = async({query, currentPage} : {query : string , currentPage : number}) => {
-  const posts =  await getPosts(query,currentPage)
-  console.log(posts);
-  
+const VideoTable = async() => {
+  const posts =  await getPostVideo()
+
     
     return(
         <div className="w-full">
@@ -32,7 +31,7 @@ const PostTable = async({query, currentPage} : {query : string , currentPage : n
             <TableRow className="hover:bg-[#25388C] hover:text-white">
               <TableHead className="text-md font-bold pl-4">No</TableHead>
               <TableHead className="text-md font-bold">Title</TableHead>
-              <TableHead className="text-md font-bold">Pembuat</TableHead>
+              <TableHead className="text-md font-bold">Eps</TableHead>
               <TableHead className="text-md font-bold">Tgl Dibuat</TableHead>
               <TableHead className="text-md font-bold">Action</TableHead>
             </TableRow>
@@ -41,20 +40,17 @@ const PostTable = async({query, currentPage} : {query : string , currentPage : n
             {posts?.map((post , index) => (
               <TableRow key={post.id} className="odd:bg-muted/50">
                 <TableCell className="pl-4">{index + 1}</TableCell>
-                <TableCell className="font-medium">{post.title}</TableCell>
-                <TableCell>{post.user.name}</TableCell>
+                <TableCell className="font-xl w-100">{post.title}</TableCell>
+                <TableCell>{post.episode}</TableCell>
                 <TableCell>{formatDate(post.createdAt.toString())}</TableCell>
                 <TableCell className="flex flex-row space-x-2">
-                  <Button className="bg-[#25388C]" asChild>
-                      <Link href={`/admin/post-video/${post.id}`}><FileVideo /></Link>
-                  </Button>
                   <Button className="bg-[#25388C]" asChild>
                       <Link href={`/post/judul-post`}><Eye /></Link>
                   </Button>
                   <Button className="bg-[#25388C]" asChild>
-                      <Link href={`/admin/posts/update/${post.id}`}><Pencil /></Link>
+                      <Link href={`/admin/post-video/update/${post.id}`}><Pencil /></Link>
                   </Button>
-                  <DeletePostBtn id={post.id} />
+                  <DeletePostVideoBtn id={post.id} />
                 </TableCell>
               </TableRow>
             ))}
@@ -67,4 +63,4 @@ const PostTable = async({query, currentPage} : {query : string , currentPage : n
     )
 }
 
-export default PostTable ;
+export default VideoTable ;

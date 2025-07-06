@@ -9,13 +9,15 @@ import { Badge } from "../ui/badge";
 import { Loader2 } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useActionState } from "react"
-import { createPost } from "@/lib/actions";
+import { updatePost } from "@/lib/actions";
 import { useSession } from "next-auth/react"
+import type { Post } from "@prisma/client";
 
-const PostForm = () => {
+const UpdatePostForm = ({dataUpdatePost} : {dataUpdatePost : Post}) => {
 const { data: session  } = useSession()
 
-const [state , formAction , isLoading] = useActionState(createPost,null)
+const updatePostWithId = updatePost.bind(null,dataUpdatePost.id);
+const [state , formAction , isLoading] = useActionState(updatePostWithId,null)
   const [genres, setGenres] = useState();
   const [studios, setStudios] = useState();
 
@@ -28,6 +30,9 @@ useEffect(() => {
         const responseStudios = await fetch('/api/studios')
         const dataStudios = await responseStudios.json();
         setStudios(dataStudios.data);
+        setSelectedCategories(dataUpdatePost.genre)
+        setSelectedStudios(dataUpdatePost.studio)
+        
       } catch (error) {
         console.error("Error fetching data SERVER ACTION INGRESOS:", error);
       }
@@ -41,9 +46,6 @@ useEffect(() => {
     return(
         <div>
              <form action={formAction} className="w-full sm:w-1/2 flex flex-col mt-5 mx-auto space-y-4 text-white body-font relative ">
-                <div className="flex flex-wrap w-full mb-10 flex-col items-center text-center">
-                    <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-[#25388C]">Buat Postingan Baru</h1>
-                </div>
 
                 {/* Id from session */}
               <input className="hidden" type="text" name="userId" readOnly value={session ? session.user.id : "0"} />
@@ -51,7 +53,7 @@ useEffect(() => {
                 {/* Input Title */}
                 <div>
                     <Label htmlFor="title" className="text-[#25388C] text-lg font-bold">Title</Label>
-                    <Input name="title" id="title" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state?.dataPost?.title} placeholder="Masukkan title" />
+                    <Input name="title" id="title" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state ? state?.dataPost?.title : dataUpdatePost.title} placeholder="Masukkan title" />
                     {state?.error &&(
                       <Badge className="bg-red-500 mt-2 text-base">{state?.error?.title}</Badge>
                     )}
@@ -62,7 +64,7 @@ useEffect(() => {
                 {/* Input Deskripsi */}
                 <div>
                     <Label htmlFor="deskripsi" className="text-[#25388C] text-lg font-bold">Description</Label>
-                    <Textarea name="deskripsi" id="description" className="min-h-14 h-20 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state?.dataPost?.deskripsi}  placeholder="Masukkan Deskripsi"  />
+                    <Textarea name="deskripsi" id="description" className="min-h-14 h-20 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state ? state?.dataPost?.deskripsi : dataUpdatePost.deskripsi}  placeholder="Masukkan Deskripsi"  />
                     {state?.error && (
                       <Badge className="bg-red-500 mt-2 text-base">{state?.error?.deskripsi}</Badge>
                     )}
@@ -71,7 +73,7 @@ useEffect(() => {
                 {/* Input Rating */}
                 <div>
                     <Label htmlFor="rating" className="text-[#25388C] text-lg font-bold">Rating</Label>
-                     <Input name="rating" id="rating" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state?.dataPost?.rating}  placeholder="Masukkan Rating"/>
+                     <Input name="rating" id="rating" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state ? state?.dataPost?.rating : dataUpdatePost.rating}  placeholder="Masukkan Rating"/>
                      <Badge className="bg-[#25388C] mt-2 text-base mr-4">Contoh : PG 13</Badge>
                      {state?.error && (
                        <Badge className="bg-red-500 mt-2 text-base">{state?.error?.rating}</Badge>
@@ -81,7 +83,7 @@ useEffect(() => {
                 {/* Input Release */}
                 <div>
                     <Label htmlFor="release" className="text-[#25388C] text-lg font-bold">Tahun Release</Label>
-                     <Input name="release" id="release" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state?.dataPost?.release}  placeholder="Masukkan Tahun Release" />
+                     <Input name="release" id="release" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state ? state?.dataPost?.release : dataUpdatePost.release}  placeholder="Masukkan Tahun Release" />
                      {state?.error && (
                       <Badge className="bg-red-500 mt-2 text-base">{state?.error?.release}</Badge>
                      )}
@@ -134,7 +136,7 @@ useEffect(() => {
                 {/* Input Link Gambar Poster */}
                 <div>
                     <Label htmlFor="imagePoster" className="text-[#25388C] text-lg font-bold">Gambar Poster</Label>
-                     <Input name="imagePoster" id="imagePoster" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state?.dataPost?.imagePoster}  placeholder="Masukkan Link" />
+                     <Input name="imagePoster" id="imagePoster" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state ? state?.dataPost?.imagePoster : dataUpdatePost.imagePoster}  placeholder="Masukkan Link" />
                      {state?.error && (
                        <Badge className="bg-red-500 mt-2 text-base">{state?.error?.imagePoster}</Badge>
                      )}
@@ -143,7 +145,7 @@ useEffect(() => {
                 {/* Input Link Gambar Banner */}
                 <div>
                     <Label htmlFor="imageBanner" className="text-[#25388C] text-lg font-bold">Gambar Banner</Label>
-                     <Input name="imageBanner" id="imageBanner" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state?.dataPost?.imageBanner}  placeholder="Masukkan Link" />
+                     <Input name="imageBanner" id="imageBanner" type="text" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" defaultValue={state ? state?.dataPost?.imageBanner : dataUpdatePost.imageBanner}  placeholder="Masukkan Link" />
                      {state?.error && (
                        <Badge className="bg-red-500 mt-2 text-base">{state?.error?.imageBanner}</Badge>
                      )}
@@ -154,21 +156,21 @@ useEffect(() => {
                 <Label htmlFor="" className="text-[#25388C] text-lg font-bold">Sources</Label>
                     <div className="w-full flex items-center">
                       <Button type="button" className="h-14 rounded-r-none shadow bg-[#25388C]">Anilist</Button>
-                      <input type="text" name="source1" defaultValue={state?.dataPost?.source1}  placeholder="Masukkan Url" className="min-h-14 w-full border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none rounded-r-lg"/>              
+                      <input type="text" name="source1" defaultValue={state ? state?.dataPost?.source1 : dataUpdatePost.source[0]}  placeholder="Masukkan Url" className="min-h-14 w-full border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none rounded-r-lg"/>              
                     </div>
                     {state?.error && (
                     <Badge className="bg-red-500 text-base">{state?.error?.source1}</Badge>
                     )}
                     <div className="w-full flex items-center">
                       <Button type="button" className="h-14 rounded-r-none shadow bg-[#25388C] cursor-pointer">AniDB</Button>
-                      <input type="text" name="source2" defaultValue={state?.dataPost?.source2} placeholder="Masukkan Url" className="min-h-14 w-full border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none rounded-r-lg"/>              
+                      <input type="text" name="source2" defaultValue={state ? state?.dataPost?.source2 : dataUpdatePost.source[1]} placeholder="Masukkan Url" className="min-h-14 w-full border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none rounded-r-lg"/>              
                     </div>
                     {state?.error && (
                       <Badge className="bg-red-500 text-base">{state?.error?.source2}</Badge>
                     )}
                     <div className="w-full flex items-center">
                       <Button type="button" className="h-14 rounded-r-none shadow bg-[#25388C] cursor-pointer">MyAnimeList</Button>
-                      <input type="text" name="source3" defaultValue={state?.dataPost?.source3} placeholder="Masukkan Url" className="min-h-14 w-full border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none rounded-r-lg"/>              
+                      <input type="text" name="source3" defaultValue={state ? state?.dataPost?.source3 : dataUpdatePost.source[2]} placeholder="Masukkan Url" className="min-h-14 w-full border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate- rounded-l-none rounded-r-lg"/>              
                     </div>
                     {state?.error && (
                       <Badge className="bg-red-500 text-base">{state?.error?.source3}</Badge>
@@ -180,7 +182,7 @@ useEffect(() => {
                  </Button>
                   ) : (
                    <Button type="submit" className="bg-[#25388C] text-dark-100 hover:bg-[#3854d0] inline-flex min-h-14 w-full items-center justify-center rounded-md px-6 py-2 font-extrabold text-base cursor-pointer mt-5 mb-72" >
-                    Buat Post
+                    Update Post
                   </Button>
                   )}
                   
@@ -191,4 +193,4 @@ useEffect(() => {
     )
 }
 
-export default PostForm
+export default UpdatePostForm;
