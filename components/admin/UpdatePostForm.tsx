@@ -38,7 +38,7 @@ useEffect(() => {
       }
     }
     fetchData();
-  }, [])
+  }, [dataUpdatePost.genre, dataUpdatePost.studio])
   
       const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
       const [selectedStudios, setSelectedStudios] = useState<string[]>([]);

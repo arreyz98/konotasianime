@@ -56,7 +56,7 @@ const PostVideoForm = ({id} : {id : string}) => {
                 {/* Input Title */}
                 <div>
                     <Label htmlFor="title" className="text-[#25388C] text-lg font-bold">Title</Label>
-                    <Input name="title" id="title" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" placeholder="Masukkan title" />
+                    <Input name="title" id="title" className="min-h-14 border border-gray-400 bg-[#F9FAFB] p-4 text-base text-[#25388C] font-semibold placeholder:font-normal placeholder:text-slate-500" value={state?.dataVideoPost?.title} placeholder="Masukkan title" />
                 </div>
 
                 {/* Input Deskripsi */}
