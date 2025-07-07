@@ -11,14 +11,14 @@ import Link from "next/link";
 import {Eye, Pencil} from "lucide-react";
 import DataNotFound from "./DataNotFound";
 import { formatDate } from "@/lib/utils";
-import { getPostVideo } from "@/lib/data";
+import { getVideoByPostId } from "@/lib/data";
 import DeletePostVideoBtn from "./DeletePostVideoBtn";
 
 
-const VideoTable = async() => {
-  const posts =  await getPostVideo()
+const VideoTable = async({postId} : {postId : string}) => {
+  const id =  postId
+  const posts =  await getVideoByPostId(id)
 
-    
     return(
         <div className="w-full">
       <div className="w-full border rounded-md overflow-hidden">

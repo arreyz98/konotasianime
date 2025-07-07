@@ -21,7 +21,7 @@ const PostVideoPage = async ({params} : {params : Promise<{id : string}> }) => {
 
             <div className="mt-7 w-full overflow-hidden space-y-4">
                {/* <SearchPost/> */}
-               <VideoTable/>
+                   <VideoTable postId={id}/>
                {/* <Suspense key={query + currentPage} fallback={<Loading/>}>
                 <PostTable query={query} currentPage={currentPage}/>
                </Suspense> */}
