@@ -17,9 +17,8 @@ import DeletePostBtn from "./DeletePostBtn";
 
 const PostTable = async({query, currentPage} : {query : string , currentPage : number}) => {
   const posts =  await getPosts(query,currentPage)
-  console.log(posts);
-  
-    
+
+
     return(
         <div className="w-full">
       <div className="w-full border rounded-md overflow-hidden">
