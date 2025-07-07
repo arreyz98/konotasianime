@@ -14,7 +14,7 @@ export const RegisterSchema = object({
 export const PostSchema = object({
     title : string().min(1,"Title tidak boleh kosong"),
     deskripsi : string().min(10,"Deskripsi tidak boleh kosong"),
-    rating : string().min(2,"Rating tidak boleh kosong"),
+    rating : string().min(1,"Rating tidak boleh kosong"),
     release : string().min(4,"Tahun rilis tidak boleh kosong"),
     genre : array(string()),
     studio : array(string()),

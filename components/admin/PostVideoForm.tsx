@@ -84,7 +84,7 @@ const PostVideoForm = ({id} : {id : string}) => {
                                   </Button>
                                    ) : (
                                     <Button type="submit" className="bg-[#25388C] text-dark-100 hover:bg-[#3854d0] inline-flex min-h-14 w-full items-center justify-center rounded-md px-6 py-2 font-extrabold text-base cursor-pointer mt-5 mb-72" >
-                                     Update Post
+                                    Tambah Video
                                    </Button>
                                    )}
 

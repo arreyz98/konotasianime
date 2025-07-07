@@ -167,7 +167,6 @@ export const getGenres = async () =>{
         redirect("/login");
     try{
         const genres = await prisma.genre.findMany()
-        console.log(genres)
         return genres;
     }catch(error){
         console.log(error);
