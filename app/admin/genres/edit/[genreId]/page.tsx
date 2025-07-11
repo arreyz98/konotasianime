@@ -3,7 +3,7 @@ import { GenreForm } from '@/components/admin/GenreForm'
 import { prisma } from '@/lib/prisma'
 
 
-export default async function EditGenrePage({ params }: {params : {genreId : string}}) {
+export default async function EditGenrePage({ params }: {params : Promise<{genreId : string}>}) {
   
   const genreId = (await params).genreId
   const genre = await prisma.genre.findUnique({
