@@ -1,14 +1,12 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 
-type Props = {
-    params: { id: string }
-}
 
-export async function GET(_: Request, { params }: Props) {
+export async function GET(_: Request, { params }: {params : Promise<{id : string}> }) {
+  const id = (await params).id
   try {
     const studio = await prisma.studio.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     })
     if (!studio) return NextResponse.json({ message: 'Studio tidak ditemukan' }, { status: 404 })
 
@@ -19,8 +17,8 @@ export async function GET(_: Request, { params }: Props) {
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+const id = (await params).id
   try {
     const { name } = await req.json()
 
@@ -31,7 +29,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const existing = await prisma.studio.findFirst({
       where: {
         name,
-        NOT: { id: params.id }, // ⛔ hindari konflik dengan data sendiri
+        NOT: { id: id }, // ⛔ hindari konflik dengan data sendiri
       },
     })
 
@@ -40,7 +38,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     const studio = await prisma.studio.update({
-      where: { id: params.id },
+      where: { id: id },
       data: { name },
     })
 
@@ -50,10 +48,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_: Request, { params }: Props) {
+export async function DELETE(_: Request, { params }: {params : Promise<{id : string}>}) {
+  const id = (await params).id
   try {
     await prisma.studio.delete({
-      where: { id: params.id },
+      where: { id: id },
     })
 
     return NextResponse.json({ message: 'Studio berhasil dihapus' })

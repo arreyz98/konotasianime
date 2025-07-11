@@ -1,12 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 
-type Params = { params: { id: string } }
-
-export async function GET(_: Request, { params }: Params) {
+export async function GET(_: Request, { params }: {params : Promise<{id : string}>}) {
+const id = (await params).id
   try {
     const genre = await prisma.genre.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     })
 
     if (!genre) {
@@ -20,7 +19,8 @@ export async function GET(_: Request, { params }: Params) {
   }
 }
 
-export async function PUT(req: Request, { params }: Params) {
+export async function PUT(req: Request, { params }: {params : Promise<{id : string}>}) {
+  const id = (await params).id
   try {
     const { name } = await req.json()
 
@@ -29,7 +29,7 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     const genre = await prisma.genre.update({
-      where: { id: params.id },
+      where: { id: id },
       data: { name },
     })
 
@@ -40,10 +40,11 @@ export async function PUT(req: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(_: Request, { params }: Params) {
+export async function DELETE(_: Request, { params }: {params : Promise<{id : string}> }) {
+  const id = (await params).id
   try {
     await prisma.genre.delete({
-      where: { id: params.id },
+      where: { id: id },
     })
 
     return NextResponse.json({ message: 'Genre berhasil dihapus' })

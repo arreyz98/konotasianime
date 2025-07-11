@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma'
 // PUT /api/admin/post-video/:videoId
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { videoId: string } }
+  { params }: { params: Promise<{ videoId: string }> }
 ) {
-  const { videoId } = params
+
+  const  videoId  = (await params).videoId
 
   if (!videoId) {
     return NextResponse.json({ error: 'ID video tidak ditemukan.' }, { status: 400 })
@@ -48,9 +49,9 @@ export async function PUT(
 // DELETE /api/admin/post-video/:videoId
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { videoId: string } }
+  { params }: { params: Promise<{ videoId: string }> }
 ) {
-  const { videoId } = params
+  const  videoId  = (await params).videoId
 
   if (!videoId) {
     return NextResponse.json({ error: 'ID video tidak ditemukan.' }, { status: 400 })

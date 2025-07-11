@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  
   try {
-    const { id } = params
+    const id = (await params).id
     const body = await req.json()
     const {
       title,
@@ -73,10 +74,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const postId = params.id
-
+    const postId = (await params).id
     await prisma.post.delete({
       where: { id: postId },
     })
