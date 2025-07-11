@@ -2,15 +2,11 @@ import StudioForm from '@/components/admin/StudioForm'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 
-type Props = {
-  params: {
-    id: string
-  }
-}
 
-export default async function EditStudioPage({ params }: Props) {
+export default async function EditStudioPage({ params }: {params : Promise<{id : string}>}) {
+  const id = (await params).id
   const studio = await prisma.studio.findUnique({
-    where: { id: params.id },
+    where: { id: id },
   })
 
   if (!studio) return notFound()

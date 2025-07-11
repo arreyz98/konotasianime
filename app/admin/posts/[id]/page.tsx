@@ -4,12 +4,14 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 
-export default async function EditPostPage({ params }: { params: { id: string } }) {
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+
+  const id = (await params).id
   const session = await getServerSession(authOptions)
   if (!session?.user) redirect('/login')
 
   const post = await prisma.post.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: {
       genres: { select: { genreId: true } },
       studios: { select: { studioId: true } },
