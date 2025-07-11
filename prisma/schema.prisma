@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id           String        @id @default(uuid())
+  title        String
+  slug         String        @unique
+  deskripsi    String        
+  release      String        
+  imagePoster  String       
+  imageBanner  String
+  source       String[]      // Misal: ["Google Drive", "Mega"]
+  postVideos   PostVideo[]
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  genres       PostGenre[]
+  studios      PostStudio[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model PostVideo {
+  id        String   @id @default(uuid())
+  title     String
+  deskripsi String
+  linkVideo String
+  duration  String
+  episode   Int
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Genre {
+  id    String      @id @default(uuid())
+  name  String
+  posts PostGenre[]
+}
+
+model Studio {
+  id    String       @id @default(uuid())
+  name  String
+  posts PostStudio[]
+}
+
+// Pivot table many-to-many Post <-> Genre
+model PostGenre {
+  postId  String
+  genreId String
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([postId, genreId])
+}
+
+// Pivot table many-to-many Post <-> Studio
+model PostStudio {
+  postId   String
+  studioId String
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  studio   Studio  @relation(fields: [studioId], references: [id], onDelete: Cascade)
+
+  @@id([postId, studioId])
+}
