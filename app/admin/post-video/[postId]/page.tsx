@@ -151,7 +151,7 @@ export default function PostVideoListPage() {
                       </Button>
                     </Link>
                     <DeleteVideoButton
-                      id={video.id}
+                      videoId={video.id}
                       onDeleted={() =>
                         setVideos(videos.filter((v) => v.id !== video.id))
                       }

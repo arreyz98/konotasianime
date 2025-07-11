@@ -83,6 +83,8 @@ export default function AdminGenrePage() {
           placeholder="Cari genre..."
         />
 
+
+      {selectedGenreIds.length > 0 && (
         <BulkDeleteGenreButton
           selectedIds={selectedGenreIds}
           onDeletedAction={() => {
@@ -90,6 +92,9 @@ export default function AdminGenrePage() {
             setSelectedGenreIds([])
           }}
         />
+      )}
+
+     
       </div>
 
       <div className="overflow-x-auto border border-zinc-800 rounded-lg">

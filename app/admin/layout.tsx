@@ -1,5 +1,6 @@
 "use client"
 import Sidebar from './_components/Sidebar'
+import AdminFooter from './_components/AdminFooter'
 import { SidebarMobile } from '@/components/admin/sidebar-mobile'
 import PageTransitionLoader from '@/components/admin/PageTransitionLoader'
 import { Suspense } from 'react'
@@ -17,10 +18,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Konten utama */}
-      <main className="flex-1 p-6">
+      <main className="min-h-screen flex flex-col pb-0 pt-6 w-full">
         <PageTransitionLoader />
         <Suspense fallback={<PageTransitionLoader/>}>
           {children}  
+          <AdminFooter/>
         </Suspense>
         </main>
     </div>

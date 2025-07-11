@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export async function GET(_: NextRequest, { params }: {params : Promise<{videoId : string}>}) {
+  const videoId = (await params).videoId
+  try {
+    const video = await prisma.postVideo.findUnique({
+      where: { id: videoId },
+    })
+
+    if (!video) {
+      return NextResponse.json({ message: 'Video tidak ditemukan' }, { status: 404 })
+    }
+
+    return NextResponse.json(video)
+  } catch (error) {
+    console.error('[POST_VIDEO_GET_ERROR]', error)
+    return NextResponse.json({ message: 'Gagal mengambil video' }, { status: 500 })
+  }
+}
+
+
 // PUT /api/admin/post-video/:videoId
 export async function PUT(
   req: NextRequest,
@@ -8,6 +27,7 @@ export async function PUT(
 ) {
 
   const  videoId  = (await params).videoId
+
 
   if (!videoId) {
     return NextResponse.json({ error: 'ID video tidak ditemukan.' }, { status: 400 })

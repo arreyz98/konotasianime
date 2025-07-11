@@ -26,7 +26,7 @@ export function PostVideoForm({ postId, initialData, onSuccess }: PostVideoFormP
   const [deskripsi, setDeskripsi] = useState(initialData?.deskripsi || '')
   const [linkVideo, setLinkVideo] = useState(initialData?.linkVideo || '')
   const [duration, setDuration] = useState(initialData?.duration || '')
-  const [episode, setEpisode] = useState(initialData?.episode || 1)
+  const [episode, setEpisode] = useState<number | ''>(initialData?.episode ?? '')
   const [loading, setLoading] = useState(false)
 
   const isEdit = !!initialData
@@ -159,15 +159,17 @@ export function PostVideoForm({ postId, initialData, onSuccess }: PostVideoFormP
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-zinc-300">Episode Ke-</label>
-          <Input
-            type="number"
-            min={1}
-            value={episode}
-            onChange={(e) => setEpisode(parseInt(e.target.value))}
-            placeholder="1"
-            className={inputStyle}
-            required
-          />
+         <Input
+          type="number"
+          value={episode === '' ? '' : episode}
+          onChange={(e) => {
+            const val = e.target.value
+            setEpisode(val === '' ? '' : parseInt(val))
+          }}
+          placeholder="1"
+          className={inputStyle}
+          required
+        />
         </div>
       </div>
 

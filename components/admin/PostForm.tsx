@@ -60,8 +60,8 @@ export function PostForm({ post, userId }: PostFormProps) {
     const fetchOptions = async () => {
       try {
         const [gRes, sRes] = await Promise.all([
-          fetch('/api/admin/genres'),
-          fetch('/api/admin/studios'),
+          fetch('/api/admin/genres/all'),
+          fetch('/api/admin/studios/all'),
         ])
       const genresData: Genre[] = await gRes.json()
       const studiosData: Studio[] = await sRes.json()

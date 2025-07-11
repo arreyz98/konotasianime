@@ -21,7 +21,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!post) redirect('/admin/posts')
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-white mb-4">Edit Post</h1>
       <PostForm
         post={{
