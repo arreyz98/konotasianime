@@ -2,13 +2,12 @@ import { notFound } from 'next/navigation'
 import { GenreForm } from '@/components/admin/GenreForm'
 import { prisma } from '@/lib/prisma'
 
-type Props = {
-  params: { genreId: string }
-}
 
-export default async function EditGenrePage({ params }: Props) {
+export default async function EditGenrePage({ params }: {params : {genreId : string}}) {
+  
+  const genreId = (await params).genreId
   const genre = await prisma.genre.findUnique({
-    where: { id: params.genreId },
+    where: { id: genreId },
   })
 
   if (!genre) return notFound()
