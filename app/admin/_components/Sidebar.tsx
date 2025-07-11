@@ -1,7 +1,8 @@
 
 'use client'
 
-import { Home, PauseCircle, MessageCircle, Sliders, Lock} from 'lucide-react'
+import { Home, PauseCircle, MessageCircle, Sliders} from 'lucide-react'
+import { LogoutButton } from '@/components/admin/LogoutButton'
 import Link from 'next/link'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
 // import { cn } from '@/lib/utils'
@@ -37,14 +38,11 @@ export default function Sidebar() {
             </Tooltip>
           ))}
         </nav>
-
         {/* Logout */}
-        <div className="mt-8">
+        <div className="mt-5">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link href="/logout">
-                <Lock className="w-5 h-5 hover:text-red-500 transition-colors" />
-              </Link>
+              <LogoutButton/>
             </TooltipTrigger>
             <TooltipContent side="right" className="text-xs">
               Keluar
