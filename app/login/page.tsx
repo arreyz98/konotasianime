@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -122,7 +123,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-zinc-400 mt-4">
               Belum punya akun?{' '}
-              <a href="/register" className="text-blue-500 hover:underline">Daftar</a>
+              <Link href="/register" className="text-blue-500 hover:underline">Daftar</Link>
             </p>
           </form>
         </CardContent>

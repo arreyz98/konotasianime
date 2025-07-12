@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -160,7 +161,7 @@ export default function RegisterPage() {
 
             <p className="text-center text-sm text-zinc-400 mt-4">
               Sudah punya akun?{' '}
-              <a href="/login" className="text-blue-500 hover:underline">Masuk</a>
+              <Link href="/login" className="text-blue-500 hover:underline">Masuk</Link>
             </p>
           </form>
         </CardContent>

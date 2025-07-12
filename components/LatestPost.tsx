@@ -1,16 +1,17 @@
 'use client'
-
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { ChevronRight, ChevronLeft, EllipsisVertical } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './ui/button'
+import { AnimatePresence, motion } from 'framer-motion'
+import SkeletonCard from './skeleton/SkeletonCard'
+import VideoCard from './VideoCard' // pastikan path ini sesuai
 
 type Video = {
   id: string
   title: string
   deskripsi: string
   episode: number
+  linkVideo: string
   createdAt: string
   post: {
     slug: string
@@ -21,79 +22,103 @@ type Video = {
 
 export default function LatestPost() {
   const [videos, setVideos] = useState<Video[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const limit = 6
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await fetch('/api/videos')
+      setIsLoading(true)
+      const res = await fetch(`/api/videos?page=${page}&limit=${limit}`)
       const data = await res.json()
-      setVideos(data)
+      setVideos(data.data)
+      setTotal(data.total)
+      setIsLoading(false)
     }
 
     fetchVideos()
-  }, [])
+  }, [page])
+
+  const totalPages = Math.ceil(total / limit)
+
+    // 💡 Hitung tinggi minimum berdasarkan jumlah video
+  const minHeight = useMemo(() => {
+  const rowHeight = 400 // tinggi per baris
+  const count = videos?.length || 0 // 🛡️ proteksi
+  const rows = Math.ceil(count / 3) || 1
+  return rowHeight * rows
+}, [videos])
 
   return (
     <section className="py-10 pb-5 bg-[#1C2029]">
       <div className="px-4 sm:px-6 lg:px-2">
-        <div className="flex flex-row items-center mb-7">
-          <div className="font-manrope text-2xl sm:text-4xl font-bold text-white ml-0 sm:ml-12">
+        <div className="flex flex-row  mb-7 ">
+          <h2 className="text-2xl text-center sm:text-4xl font-bold text-white">
             Latest Update
-          </div>
-          <div className="hidden sm:flex flex-row ml-auto mr-0 sm:mr-12">
-            <Button className="bg-blue-400 rounded-full mr-2 cursor-pointer w-[40px]">
+          </h2>
+          <div className="hidden sm:flex flex-row ml-auto mr-0">
+            <Button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="bg-[#4C6E49] rounded-full mr-2 w-[40px]"
+            >
               <ChevronLeft className="size-6" />
             </Button>
-            <Button className="bg-blue-400 rounded-full cursor-pointer w-[40px]">
+            <Button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+              className="bg-[#4C6E49] rounded-full w-[40px]"
+            >
               <ChevronRight className="size-6" />
             </Button>
           </div>
         </div>
 
-        <div className="flex justify-center mb-14 gap-y-8 flex-wrap lg:gap-x-8">
-          {videos.map((video) => (
-            <Link
-              key={video.id}
-              href={`/${video.post.slug}`}
-              className="bg-black w-full max-lg:max-w-xl lg:w-xl rounded-2xl shadow-2xl"
+                <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="loading"
+              className="flex justify-center mb-14 flex-wrap gap-6 px-4 sm:px-6 lg:px-2 min-h-[1200px]"
             >
-              <div className="relative flex mb-6 h-[200px] sm:h-[360px]">
-                <Image
-                  src={video.post.imageBanner}
-                  alt={video.post.title}
-                  fill
-                  className="object-cover rounded-t-lg hover:brightness-[70%] transition-all"
-                />
-              </div>
-              <div className="block p-5">
-                <div className="flex">
-                  <h4 className="text-white font-bold leading-8 mb-5">{video.title}</h4>
-                  <Button className="ml-auto bg-black cursor-pointer">
-                    <EllipsisVertical className="text-white size-5" />
-                  </Button>
-                </div>
-                <p className="text-sm sm:text-base text-gray-500 mb-5">
-                  {video.deskripsi.slice(0, 120)}...
-                </p>
-                <div className="flex items-center justify-between font-medium">
-                  <h6 className="text-sm text-blue-400 font-bold">Episode {video.episode}</h6>
-                  <span className="text-sm text-white">
-                    {new Date(video.createdAt).toLocaleDateString('id-ID', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              {Array.from({ length: 9 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`videos-page-${page}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              style={{ minHeight }}
+              className="flex justify-center mb-14 gap-y-8 flex-wrap lg:gap-x-8"
+            >
+             {Array.isArray(videos) &&
+              videos.map((video) => (
+                video?.post ? <VideoCard key={video.id} {...video} /> : null
+            ))}
 
-        <div className="flex sm:hidden flex-row justify-center mr-0 sm:mr-12">
-          <Button className="bg-blue-400 rounded-full mr-2 cursor-pointer w-[40px]">
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+
+        {/* Mobile Pagination */}
+        <div className="flex sm:hidden flex-row justify-center mt-6">
+          <Button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className="bg-blue-400 rounded-full mr-2 w-[40px]"
+          >
             <ChevronLeft className="size-6" />
           </Button>
-          <Button className="bg-blue-400 rounded-full cursor-pointer w-[40px]">
+          <Button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={page === totalPages}
+            className="bg-blue-400 rounded-full w-[40px]"
+          >
             <ChevronRight className="size-6" />
           </Button>
         </div>
