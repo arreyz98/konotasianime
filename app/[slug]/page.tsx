@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { prisma } from "@/lib/prisma"
 import DetailVideo from "@/components/DetailVideo"
-import { Navbar } from "@/components/Navbar"
+// import { Navbar } from "@/components/Navbar"
 
 
 export default async function DetailAnimePage({ params }: {params : Promise<{slug : string}>}) {
@@ -24,7 +24,7 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
 
   return (
     <>
-    <Navbar/>
+    {/* <Navbar/> */}
     <div className="relative mx-auto px-4 py-8 sm:px-6 lg:px-8 h-[500px] sm:h-[480px] ">
       <Image
         src={post.imageBanner}
