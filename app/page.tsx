@@ -1,11 +1,11 @@
 import Image from "next/image";
-import { Navbar } from "@/components/Navbar";
+// import { Navbar } from "@/components/Navbar";
 import LatestPost from "@/components/LatestPost";
 
 export default function Home() {
   return (
     <div>
-      <Navbar/>
+      {/* <Navbar/> */}
        <div className={`relative h-[32.25vw]`}>
              <div className="relative w-full bg-black text-white flex flex-col md:flex-row items-start md:items-stretch">
                   {/* Left: Text Content */}

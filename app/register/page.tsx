@@ -39,46 +39,44 @@ export default function RegisterPage() {
   })
 
   const onSubmit = async (data: RegisterFormData) => {
-    try {
-        const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-        })
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        email: data.email, 
+        password: data.password 
+      }),
+    })
 
+    const result = await res.json()
 
-       if (!res.ok) {
-        const result = await res.json()
-        toast.error(result.error || 'Gagal mendaftar', { style: { backgroundColor: '#4C6E49', color: '#fff' } })
-        return
-        }
-
-
-      toast.success('Berhasil mendaftar!', {
-        style: { backgroundColor: '#4C6E49', color: '#fff' },
-      })
-
-  // Auto login setelah register
-      const signInResult = await signIn('credentials', {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      })
-
-      if (signInResult?.ok) {
-        router.push('/admin/dashboard')
-      } else {
-        router.push('/login')
-      }
-
-    } catch{
-      toast.error( 'Terjadi kesalahan', {
-        style: { backgroundColor: '#4C6E49', color: '#fff' },
-      })
+    if (!res.ok) {
+      toast.error(result.error || 'Gagal mendaftar')
+      return
     }
+
+    toast.success('Berhasil mendaftar!')
+
+    // Auto login setelah register
+    const signInResult = await signIn('credentials', {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    })
+
+    if (signInResult?.ok) {
+      router.push('/admin/dashboard')
+    } else {
+      router.push('/login')
+    }
+  } catch (error) {
+    console.error('Registration error:', error)
+    toast.error('Terjadi kesalahan')
   }
+}
 
   return (
     <main className="relative min-h-screen flex items-center justify-center text-white px-4 py-10">
