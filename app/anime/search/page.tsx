@@ -5,8 +5,8 @@ import { notFound } from 'next/navigation'
 import AnimeGrid from '@/components/AnimeGrid'
 
 
-export default async function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
-  const query = searchParams.q ?? ''
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const query = (await searchParams).q ?? ''
   if (!query) return notFound()
 
   return (
