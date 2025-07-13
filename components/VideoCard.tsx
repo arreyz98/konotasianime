@@ -33,7 +33,7 @@ export default function VideoCard({
     
   return (
     <Link
-      href={`/${post.slug}`}
+      href={`/anime/${post.slug}`}
       className="bg-[#0E1015] w-full max-w-[480px] rounded-2xl shadow-lg hover:shadow-xl transition"
     >
       <div className="relative">
@@ -53,7 +53,7 @@ export default function VideoCard({
 
   <div className="absolute bottom-2 left-2">
     <Image
-      src="/images/hyouka-logo.png"
+      src="/images/anilist-ico.svg"
       alt="logo"
       width={70}
       height={70}
@@ -83,7 +83,7 @@ export default function VideoCard({
           {deskripsi}
         </p>
         <div className="mt-2 text-xs text-[#4C6E49] font-medium">
-          Norinime - Nonton Original Anime 
+          Norinime - Nonton Resmi Anime 
         </div>
       </div>
     </Link>

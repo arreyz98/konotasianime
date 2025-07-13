@@ -1,7 +1,7 @@
 
 'use client'
 
-import { Home, PauseCircle, MessageCircle, Sliders} from 'lucide-react'
+import { Eye, Home, PauseCircle, MessageCircle, Sliders} from 'lucide-react'
 import { LogoutButton } from '@/components/admin/LogoutButton'
 import Link from 'next/link'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
@@ -11,7 +11,8 @@ const navItems = [
   { icon: Home, href: '/admin/dashboard', label: 'Dashboard' },
   { icon: PauseCircle, href: '/admin/posts', label: 'Postingan' },
   { icon: MessageCircle, href: '/admin/genres', label: 'Genre' },
-  { icon: Sliders, href: '/admin/studios', label: 'Studio' }
+  { icon: Sliders, href: '/admin/studios', label: 'Studio' },
+  { icon: Eye, href: '/', label: 'Lihat Web' }
 ]
 
 export default function Sidebar() {

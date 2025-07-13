@@ -53,22 +53,22 @@ export default function LatestPost() {
   return (
     <section className="py-10 pb-5 bg-[#1C2029]">
       <div className="px-4 sm:px-6 lg:px-2">
-        <div className="flex flex-row  mb-7 ">
-          <h2 className="text-2xl text-center sm:text-4xl font-bold text-white">
-            Latest Update
+        <div className="flex flex-row w-[80%] mx-auto mb-7 ">
+          <h2 className="text-2xl text-center sm:text-4xl font-bold space-mono text-white font-space-mono">
+            Baru Ditambahkan
           </h2>
           <div className="hidden sm:flex flex-row ml-auto mr-0">
             <Button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
-              className="bg-[#4C6E49] rounded-full mr-2 w-[40px]"
+              className="bg-[#4C6E49] rounded-full mr-2 w-[38px]"
             >
               <ChevronLeft className="size-6" />
             </Button>
             <Button
               onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={page === totalPages}
-              className="bg-[#4C6E49] rounded-full w-[40px]"
+              className="bg-[#4C6E49] rounded-full w-[38px]"
             >
               <ChevronRight className="size-6" />
             </Button>

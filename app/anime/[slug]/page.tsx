@@ -43,9 +43,11 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
           ))}
         </div>
 
-        <p className="text-white font-poppins text-justify mt-4">
-          {post.deskripsi}
-        </p>
+        <div className="h-[142px]">
+          <p className="text-white font-poppins text-justify mt-4">
+            {post.deskripsi}
+          </p>
+        </div>
 
         {/* Studios */}
         <div className="hidden sm:flex flex-col space-y-2 mt-4">

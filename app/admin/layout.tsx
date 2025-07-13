@@ -3,9 +3,9 @@ import Sidebar from './_components/Sidebar'
 import AdminFooter from './_components/AdminFooter'
 import { SidebarMobile } from '@/components/admin/sidebar-mobile'
 import PageTransitionLoader from '@/components/admin/PageTransitionLoader'
-import { Suspense } from 'react'
+import { Suspense,ReactNode } from 'react'
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col md:flex-row items-stretch">
 
@@ -19,7 +19,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Konten utama */}
       <main className="min-h-screen flex flex-col pb-0 pt-6 w-full">
-        <PageTransitionLoader />
         <Suspense fallback={<PageTransitionLoader/>}>
           {children}  
           <AdminFooter/>
