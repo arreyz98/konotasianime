@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 export async function GET(req: Request) {
@@ -7,17 +8,23 @@ export async function GET(req: Request) {
     const search = searchParams.get('search') || ''
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
+    const sort = searchParams.get('sort') || ''
     const skip = (page - 1) * limit
+
+    const whereClause = {
+      title: {
+        contains: search,
+        mode: Prisma.QueryMode.insensitive,
+      },
+    }
 
     const [data, total] = await Promise.all([
       prisma.post.findMany({
-        where: {
-          title: {
-            contains: search,
-            mode: 'insensitive',
-          },
-        },
-        orderBy: { createdAt: 'desc' },
+        where: whereClause,
+        orderBy:
+          sort === 'featured'
+            ? [{ isFeatured: 'desc' }, { createdAt: 'desc' }]
+            : { createdAt: 'desc' },
         skip,
         take: limit,
         include: {
@@ -26,20 +33,16 @@ export async function GET(req: Request) {
           },
         },
       }),
-      prisma.post.count({
-        where: {
-          title: {
-            contains: search,
-            mode: 'insensitive',
-          },
-        },
-      }),
+      prisma.post.count({ where: whereClause }),
     ])
 
     return NextResponse.json({ data, total })
   } catch (error) {
     console.error('[POST_LIST_ERROR]', error)
-    return NextResponse.json({ message: 'Gagal mengambil data post' }, { status: 500 })
+    return NextResponse.json(
+      { message: 'Gagal mengambil data post' },
+      { status: 500 }
+    )
   }
 }
 

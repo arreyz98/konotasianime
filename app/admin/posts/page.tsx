@@ -3,6 +3,7 @@
 import { useEffect, useState , useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { Switch } from "@/components/ui/switch"
 import { DeletePostButton } from '@/components/admin/DeletePostButton'
 import { BulkDeletePostButton } from '@/components/admin/BulkDeletePostButton'
 import { Pencil, VideoIcon } from 'lucide-react'
@@ -16,6 +17,7 @@ type Post = {
   title: string
   slug: string
   createdAt: string
+  isFeatured : boolean
   _count: {
     postVideos: number
   }
@@ -25,6 +27,9 @@ export default function AdminPostPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [sortByFeatured, setSortByFeatured] = useState(false)
+  const maxFeatured = 5 //jumlah max slide show
+  const featuredCount = posts.filter((p) => p.isFeatured).length // jumlah post yg aktif di slideshow
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 10
@@ -42,7 +47,7 @@ const fetchPosts = useCallback(async () => {
   try {
     setLoading(true)
     const res = await fetch(
-      `/api/admin/posts?search=${search}&page=${page}&limit=${limit}`
+      `/api/admin/posts?search=${search}&page=${page}&limit=${limit}&sort=${sortByFeatured ? 'featured' : ''}`
     )
 
     if (!res.ok) throw new Error('Gagal mengambil data')
@@ -58,8 +63,23 @@ const fetchPosts = useCallback(async () => {
   } finally {
     setLoading(false)
   }
-}, [search, page]) 
+}, [search, page, sortByFeatured])
 
+const toggleFeatured = async (postId: string, isFeatured: boolean) => {
+  const res = await fetch(`/api/admin/posts/${postId}/featured`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isFeatured }),
+  })
+  if (!res.ok) {
+    toast.error("Gagal memperbarui status slideshow")
+    return
+  }
+  toast.success(
+    `Post berhasil ${isFeatured ? "ditampilkan" : "disembunyikan"} dari slideshow`
+  )
+  fetchPosts()
+}
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -92,7 +112,7 @@ const fetchPosts = useCallback(async () => {
         />
       )}
 
-      <div className="flex flex-col md:flex-row gap-4 justify-between">
+      <div className="flex flex-row md:flex-row gap-4">
         <SearchInput 
           value={search}
           onChangeAction={(e) => {
@@ -101,6 +121,18 @@ const fetchPosts = useCallback(async () => {
           }}
           placeholder="Cari postingan..."
         />
+
+        <Button
+          variant="default"
+          className={sortByFeatured ? "bg-[#4C6E49]" : "bg-[#27272A]"}
+          onClick={() => {
+            setSortByFeatured(!sortByFeatured)
+            setPage(1) // reset ke page pertama
+          }}
+        >
+          {sortByFeatured ? "Urutkan: Featured ↑" : "Urutkan: Default"}
+        </Button>
+
       </div>
 
       <div className="overflow-x-auto border border-zinc-800 rounded-lg">
@@ -108,8 +140,11 @@ const fetchPosts = useCallback(async () => {
           <thead className="bg-[#4C6E49]">
             <tr>
               <th className="px-4 py-3 text-center text-sm font-medium text-white">Pilih</th>
+              <th className="px-4 py-3 text-center text-sm font-medium text-white">
+                Slideshow
+              </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-white">Judul</th>
-              <th className="px-4 py-3 text-center text-sm font-medium text-white">Episode</th>
+              <th className="px-4 py-3 text-center text-sm font-medium text-white">Jumlah Video</th>
               <th className="px-4 py-3 text-center text-sm font-medium text-white">Tanggal</th>
               <th className="px-4 py-3 text-center text-sm font-medium text-white">Aksi</th>
             </tr>
@@ -134,9 +169,17 @@ const fetchPosts = useCallback(async () => {
                       onChange={() => toggleSelect(post.id)}
                     />
                   </td>
+                  <td className="px-4 py-4 text-center">
+                    <Switch
+                      checked={post.isFeatured}
+                      onCheckedChange={(checked) => toggleFeatured(post.id, checked)}
+                      disabled={!post.isFeatured && featuredCount >= maxFeatured}
+                      className="data-[state=checked]:bg-[#4C6E49] data-[state=unchecked]:bg-zinc-700 ring-1 ring-zinc-700"
+                    />
+                  </td>
                   <td className="px-6 py-4">
                     <Link 
-                      href={`/posts/${post.slug}`} 
+                      href={`/anime/${post.slug}`} 
                       className="hover:underline hover:text-[#4C6E49]"
                       target="_blank"
                     >
