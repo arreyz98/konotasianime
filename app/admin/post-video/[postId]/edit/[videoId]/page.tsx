@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { PostVideoForm } from '@/components/admin/PostVideoForm'
+import { VideoType } from '@prisma/client'
 
 type PostVideo = {
   id: string
@@ -14,6 +15,7 @@ type PostVideo = {
   duration: string
   episode: number
   linkVideo: string // hanya id youtube, misal: abc123xyz78
+  type : VideoType
 }
 
 export default function EditPostVideoPage() {
