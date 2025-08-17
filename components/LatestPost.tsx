@@ -17,6 +17,7 @@ type Video = {
     slug: string
     title: string
     imageBanner: string
+    rating : string
   }
 }
 

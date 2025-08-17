@@ -5,10 +5,12 @@ import Image from 'next/image'
 import PreloadImages from './skeleton/PreloadImages'
 import SlideshowSkeleton from './skeleton/SkeletonSlideShow'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 
 interface Post {
   id: string
   title: string
+  slug : string
   deskripsi: string
   imageBanner: string
 }
@@ -17,6 +19,7 @@ interface Post {
 interface SlideData {
   id: string
   title: string
+  slug : string
   description: string
   imageUrl: string
   imageAlt: string
@@ -43,15 +46,14 @@ const [resetKey, setResetKey] = useState(0)
       try {
         const res = await fetch('/api/user/posts/featured-posts')
         const data = await res.json()
-
         const formatted = data.map((post: Post) => ({
           id: post.id,
           title: post.title,
+          slug : post.slug,
           description: post.deskripsi,
           imageUrl: post.imageBanner,
           imageAlt: post.title,
         }))
-
         setSlides(formatted)
       } catch (err) {
         console.error('Failed to load slides:', err)
@@ -91,7 +93,7 @@ const [resetKey, setResetKey] = useState(0)
       </div>
     )
   }
-
+  console.log(slides)
   return (
     <div className="relative h-[32.25vw] overflow-hidden bg-black">
       <PreloadImages images={slides.map((s) => s.imageUrl)} />
@@ -111,7 +113,7 @@ const [resetKey, setResetKey] = useState(0)
                 }}
                 className="absolute top-0 left-0 w-full h-full"
               >
-            <div className="relative w-full h-full text-white flex flex-col md:flex-row items-start md:items-stretch">
+            <Link href={`/anime/${slides[currentSlide].slug}`} className="relative w-full h-full text-white flex flex-col md:flex-row items-start md:items-stretch">
               {/* TEXT */}
               <div className="md:w-[70%] ml-5 p-6 md:p-12 flex flex-col justify-center mb-20 z-10">
                 <motion.h1
@@ -149,7 +151,7 @@ const [resetKey, setResetKey] = useState(0)
                 />
                 <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/90 to-transparent pointer-events-none z-10" />
               </div>
-            </div>
+            </Link>
           </motion.div>
         </AnimatePresence>
       </div>

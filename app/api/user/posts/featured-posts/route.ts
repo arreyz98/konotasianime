@@ -10,6 +10,7 @@ export async function GET() {
         id: true,
         title: true,
         deskripsi: true,
+        slug : true,
         imageBanner: true,
       },
     })

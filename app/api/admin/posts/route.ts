@@ -56,6 +56,7 @@ export async function POST(req: Request) {
       release,
       imagePoster,
       imageBanner,
+      rating,
       source,
       genres,
       studios,
@@ -86,6 +87,7 @@ export async function POST(req: Request) {
         release,
         imagePoster,
         imageBanner,
+        rating,
         source,
         userId,
         genres: {

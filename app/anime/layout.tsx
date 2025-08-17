@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { ReactNode } from 'react'
 
 export default function AnimeLayout({ children }: { children: ReactNode }) {
@@ -8,6 +9,7 @@ export default function AnimeLayout({ children }: { children: ReactNode }) {
         <main>
               <Navbar />
               {children}
+            <Footer />
         </main>
     </div>
   )

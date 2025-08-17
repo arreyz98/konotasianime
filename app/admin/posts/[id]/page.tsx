@@ -32,6 +32,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
           release: post.release ?? '',
           imagePoster: post.imagePoster,
           imageBanner: post.imageBanner,
+          rating: post.rating,
           source: post.source,
           genres: post.genres.map(g => ({ id: g.genreId })),
           studios: post.studios.map(s => ({ id: s.studioId })),

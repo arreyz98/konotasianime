@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
               slug: true,
               title: true,
               imageBanner: true,
+              rating : true
             },
           },
         },

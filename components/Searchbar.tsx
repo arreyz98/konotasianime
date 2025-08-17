@@ -33,9 +33,9 @@ const SearchBar = ({ searchQuery, setSearchQuery, searchMobile, setSearchMobile 
       </div>
       <button
         type="submit"
-        className="hidden sm:block px-5 py-2.5 bg-[#4c6e49] border border-[#121212] border-l-0 rounded-r-2xl"
+        className="hidden sm:block px-5 py-2.5 bg-[#4c6e49] hover:bg-[#588054] border border-[#121212] border-l-0 rounded-r-2xl"
       >
-        <SearchIcon className="text-gray-400 size-5" />
+        <SearchIcon className="text-white size-5" />
       </button>
       <button
         type="button"

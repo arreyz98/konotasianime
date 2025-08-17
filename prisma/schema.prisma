@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -16,35 +17,75 @@ model User {
 }
 
 model Post {
-  id          String       @id @default(uuid())
+  id          String               @id @default(uuid())
   title       String
-  slug        String       @unique
+  slug        String               @unique
   deskripsi   String
   release     String
   imagePoster String
   imageBanner String
+  rating      String              @default("Remaja")
   source      String[]
   userId      String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  isFeatured  Boolean      @default(false)
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  isFeatured  Boolean              @default(false)
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   genres      PostGenre[]
   studios     PostStudio[]
   postVideos  PostVideo[]
 }
 
+
+enum VideoType {
+  EPISODE
+  TRAILER
+  PV
+  MV
+  RECAP
+  FILLER
+  OTHER
+}
+
 model PostVideo {
-  id        String   @id @default(uuid())
-  title     String
-  deskripsi String
-  linkVideo String
-  duration  String
-  episode   Int
-  postId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id           String         @id @default(uuid())
+  title        String
+  deskripsi    String
+  linkVideo    String?
+  duration     String
+  episode      Int         
+  type         VideoType      @default(EPISODE) // <-- baru ditambahkan
+  postId       String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  post         Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  officialLinks OfficialLink[]
+}
+
+model OfficialLink {
+  id            String         @id @default(uuid()) 
+  url           String     
+  access        String       @default("Gratis")
+  postVideo     PostVideo    @relation(fields: [postVideoId], references: [id], onDelete: Cascade)
+  postVideoId   String     
+  platform      LinkPlatform   @relation(fields: [platformId], references: [id]) 
+  platformId    String    
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+
+  @@index([postVideoId])
+  @@index([platformId]) 
+  @@map("official_links") // <-- (Opsional) Untuk konsistensi penamaan tabel snake_case
+}
+
+model LinkPlatform {
+  id            String         @id @default(uuid()) 
+  name          String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  officialLinks OfficialLink[]
+  
+  @@map("link_platforms")
 }
 
 model Genre {

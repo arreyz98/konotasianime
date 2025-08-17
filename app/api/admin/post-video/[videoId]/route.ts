@@ -6,6 +6,15 @@ export async function GET(_: NextRequest, { params }: {params : Promise<{videoId
   try {
     const video = await prisma.postVideo.findUnique({
       where: { id: videoId },
+      include : {
+        officialLinks : {
+          select : {
+            platformId : true,
+            url : true,
+            access : true
+          }
+        }
+      }
     })
 
     if (!video) {
@@ -25,67 +34,62 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ videoId: string }> }
 ) {
+  const videoId = (await params).videoId
 
-  const  videoId  = (await params).videoId
-
-
-  if (!videoId) {
-    return NextResponse.json({ error: 'ID video tidak ditemukan.' }, { status: 400 })
-  }
-
-  try {
+    try {
     const body = await req.json()
-    const { title, deskripsi, linkVideo, duration, episode } = body
+    const {
+    title,
+    deskripsi,
+    linkVideo,
+    duration,
+    episode,
+    type,
+    officialLinks = [],
+  } = body;
 
-    if (
-      !title || !deskripsi || !linkVideo || !duration || !episode ||
-      typeof title !== 'string' ||
-      typeof deskripsi !== 'string' ||
-      typeof linkVideo !== 'string' ||
-      typeof duration !== 'string' ||
-      typeof episode !== 'number'
-    ) {
-      return NextResponse.json({ error: 'Data tidak valid.' }, { status: 400 })
-    }
-
-    const updated = await prisma.postVideo.update({
-      where: { id: videoId },
-      data: {
-        title,
-        deskripsi,
-        linkVideo, // hanya ID YouTube
-        duration,
-        episode,
-      },
-    })
+    
+const updated = await prisma.postVideo.update({
+  where: { id: videoId },
+  data: {
+    title,
+    deskripsi,
+    linkVideo,
+    duration,
+    episode,
+    type,
+    officialLinks: {
+      deleteMany: {}, // Hapus semua dulu
+      create: officialLinks.map((link: { platformId: string; url: string; access?: string }) => ({
+        platformId: link.platformId,
+        url: link.url,
+        access: link.access ?? 'Gratis',
+      })),
+    },
+  },
+  include: {
+    officialLinks: true,
+  },
+});
 
     return NextResponse.json(updated)
   } catch (error) {
-    console.error('Error updating post video:', error)
-    return NextResponse.json({ error: 'Gagal memperbarui video.' }, { status: 500 })
+    console.error('[POST_VIDEO_UPDATE]', error)
+    return new NextResponse('Internal Error', { status: 500 })
   }
 }
 
-// DELETE /api/admin/post-video/:videoId
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ videoId: string }> }
-) {
-  const  videoId  = (await params).videoId
-
-  if (!videoId) {
-    return NextResponse.json({ error: 'ID video tidak ditemukan.' }, { status: 400 })
-  }
+export async function DELETE(_: Request, { params }: {params : Promise<{videoId : string}>}) {
 
   try {
-    await prisma.postVideo.delete({
-      where: { id: videoId },
+    const videoId = (await params).videoId
+    const deleted = await prisma.postVideo.delete({
+      where: { id: videoId},
     })
 
-    return NextResponse.json({ message: 'Video berhasil dihapus.' })
+    return NextResponse.json({ success: true, deleted })
   } catch (error) {
-    console.error('Error deleting video:', error)
-    return NextResponse.json({ error: 'Gagal menghapus video.' }, { status: 500 })
+    console.error('[POST_VIDEO_DELETE]', error)
+    return new NextResponse('Failed to delete video', { status: 500 })
   }
 }
-

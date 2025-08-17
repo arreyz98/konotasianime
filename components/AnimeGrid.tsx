@@ -2,13 +2,16 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import clsx from 'clsx'
 import { useState, useEffect, useCallback } from 'react'
-import { Search, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight} from 'lucide-react'
+import FilterDropdown from './dropdown/FilterDropdown'
 
 interface Post {
   id: string
   slug: string
   title: string
+  rating : string
   imagePoster: string
   postVideos: { id: string }[]
 }
@@ -22,6 +25,15 @@ interface Studio {
   id: string
   name: string
 }
+
+
+const optionsSortBy = [
+  {name : "Most Relevance"},
+  {name : "Newest"},
+  {name : "Oldest"},
+  {name : "A-Z"},
+  {name : "Z-A"},
+]
 
 const SkeletonCard = () => (
   <div className="relative rounded-xl overflow-hidden bg-[#1a1a1d] animate-pulse">
@@ -132,47 +144,32 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
               placeholder="Cari anime..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="bg-[#09090B] text-white px-4 py-3 pr-10 rounded-xl shadow-sm w-full focus:outline-none"
+              className="bg-[#09090B] font-space-mono text-sm text-white px-4 py-3.5 pr-10 rounded-xl shadow-sm w-full focus:outline-none"
             />
             <Search className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
           </div>
 
-          {[{
-            label: 'Genre',
-            value: genreFilter,
-            onChange: setGenreFilter,
-            options: genres.map(g => ({ value: g.name, label: g.name }))
-          }, {
-            label: 'Studio',
-            value: studioFilter,
-            onChange: setStudioFilter,
-            options: studios.map(s => ({ value: s.name, label: s.name }))
-          }, {
-            label: 'Sort by',
-            value: sortOrder,
-            onChange: setSortOrder,
-            options: [
-              'Most relevance',
-              'Newest',
-              'Oldest',
-              'A-Z',
-              'Z-A'
-            ].map(s => ({ value: s, label: s }))
-          }].map(({ label, value, onChange, options }) => (
-            <div key={label} className="relative w-[200px]">
-              <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white pointer-events-none" />
-              <select
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className="bg-[#09090B] text-white pl-9 pr-10 py-2 h-[48px] rounded-xl shadow-sm w-full focus:outline-none appearance-none transition duration-200 ease-in-out"
-              >
-                <option value="">{label}</option>
-                {options.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
-          ))}
+
+          <FilterDropdown
+           label="Genre"
+          value={genreFilter}
+          onChange={setGenreFilter}
+          options={genres.map((g) => ({ value: g.name, label: g.name }))}
+           />
+           
+          <FilterDropdown
+           label="Studio"
+          value={studioFilter}
+          onChange={setStudioFilter}
+          options={studios.map((g) => ({ value: g.name, label: g.name }))}
+           />
+
+          <FilterDropdown
+           label="Sort By"
+          value={sortOrder}
+          onChange={setSortOrder}
+          options={optionsSortBy.map((g) => ({ value: g.name, label: g.name }))}
+           />
 
           {hasFilter && (
             <button
@@ -202,10 +199,18 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
                 </div>
                 <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
                   {post.postVideos.length > 0 && (
-                    <span className="bg-[#4C6E49] text-white text-[10px] font-semibold px-2 py-[1px] rounded-full shadow">
+                    <span className="bg-[#4C6E49] text-white text-[10px] font-semibold px-2 py-[1px] rounded-full shadow w-[40px]">
                       {post.postVideos.length} ep
                     </span>
                   )}
+                  <span className={clsx(`text-white text-[10px] font-semibold uppercase px-2 py-[1px] rounded-full shadow`,{
+                    'bg-[#FFC107]' : post.rating === "Remaja",
+                    'bg-[#4CAF50]' : post.rating === "Anak & Bimbingan",
+                    'bg-[#C62828]' : post.rating === "Dewasa Berat",
+                    'bg-[#FF7043]' : post.rating === "Dewasa Ringan"
+                  })}>
+                      {post.rating}
+                  </span>
                 </div>
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#1C2029] via-[#1C2029]/70 to-transparent p-2">
                   <h3 className="text-white text-xs font-medium line-clamp-2">{post.title}</h3>

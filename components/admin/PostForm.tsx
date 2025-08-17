@@ -7,6 +7,13 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { MultiSelect } from '../MultiSelect'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 type PostFormProps = {
   post?: {
@@ -18,6 +25,7 @@ type PostFormProps = {
     imagePoster: string
     imageBanner: string
     source: string[]
+    rating : string
     genres: { id: string }[]
     studios: { id: string }[]
   }
@@ -50,6 +58,7 @@ export function PostForm({ post, userId }: PostFormProps) {
   const [source1, setSource1] = useState(post?.source?.[0] || '')
   const [source2, setSource2] = useState(post?.source?.[1] || '')
   const [source3, setSource3] = useState(post?.source?.[2] || '')
+  const [rating, setRating] = useState(post?.rating || '')
   const [genres, setGenres] = useState<string[]>(post?.genres.map((g) => g.id) || [])
   const [studios, setStudios] = useState<string[]>(post?.studios.map((s) => s.id) || [])
   const [allGenres, setAllGenres] = useState<Option[]>([])
@@ -96,6 +105,7 @@ export function PostForm({ post, userId }: PostFormProps) {
       imageBanner,
       source: [source1, source2, source3],
       genres,
+      rating,
       studios,
       userId,
     }
@@ -214,6 +224,23 @@ export function PostForm({ post, userId }: PostFormProps) {
           placeholder="https://anidb.net/..."
           className={inputStyle}
         />
+      </div>
+
+      <div>
+       <Label className="text-white mb-1 block">Rating</Label>
+          <Select
+              value={rating}
+              onValueChange={(value) =>setRating(value)}>
+              <SelectTrigger className={inputStyle + ' px-3'}>
+                <SelectValue placeholder="Pilih rating..." />
+              </SelectTrigger>
+              <SelectContent className="bg-zinc-900 text-white border-zinc-700">
+                <SelectItem value="Anak & Bimbingan">Anak & Bimbingan</SelectItem>
+                <SelectItem value="Remaja">Remaja</SelectItem>
+                <SelectItem value="Dewasa Ringan">Dewasa Ringan</SelectItem>
+                <SelectItem value="Dewasa Berat">Dewasa Berat</SelectItem>
+              </SelectContent>
+            </Select>
       </div>
 
       <MultiSelect

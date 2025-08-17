@@ -4,8 +4,7 @@ import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { prisma } from "@/lib/prisma"
 import DetailVideo from "@/components/DetailVideo"
-// import { Navbar } from "@/components/Navbar"
-
+import AgeRatingModalClient from "@/components/modal/AgeRatingModalClient"
 
 export default async function DetailAnimePage({ params }: {params : Promise<{slug : string}>}) {
   const slug = (await params).slug
@@ -16,6 +15,13 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
       studios: { include: { studio: true } },
       postVideos: {
         orderBy: { episode: 'asc' }, // optional: urutkan video
+        include : {
+          officialLinks :{
+            include :{
+              platform : true
+            }
+          }
+        }
       },
     },
   })
@@ -24,8 +30,9 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
 
   return (
     <>
-    {/* <Navbar/> */}
-    <div className="relative mx-auto px-4 py-8 sm:px-6 lg:px-8 h-[500px] sm:h-[480px] ">
+    <div className="min-h-screen bg-[#1C2029]">
+       <AgeRatingModalClient rating={post.rating} description={"Pastikan Anda sudah cukup umur untuk mengakses anime ini"} />
+    <div className="relative mx-auto px-4 py-8 sm:px-6 lg:px-8 h-[500px] sm:h-[480px]">
       <Image
         src={post.imageBanner}
         fill
@@ -78,9 +85,19 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
         </div>
       </div>
     </div>
-     <div className="grid grid-cols-3 gap-1 pt-10 px-0 sm:px-5 mb-10 bg-[#1C2029]">
-      <DetailVideo dataVideo={post.postVideos} />
+
+ {post.postVideos.length === 0 ? (
+     <div className="flex flex-col items-center justify-center py-20 text-center text-white">
+      {/* Text */}
+      <h2 className="text-2xl font-semibold text-gray-300 mb-2">Belum ada video</h2>
+      <p className="text-lg text-gray-400 max-w-xs">
+        Video untuk anime ini belum tersedia. Silakan kembali lagi nanti.
+      </p>
     </div>
+) : (
+  <DetailVideo dataVideo={post.postVideos} />
+)}
+</div>
 </>
   )
 }
