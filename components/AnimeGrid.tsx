@@ -134,10 +134,10 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
   
 
   return (
-    <div className="space-y-8 bg-[#1C2029] px-4 py-10 min-h-screen">
+    <div className="space-y-8 bg-[#1C2029] px-4 py-2 min-h-screen">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
         <h1 className="text-white text-3xl font-bold tracking-tight">Temukan Anime Favoritmu</h1>
-        <div className="flex flex-col md:flex-row md:items-center gap-4 flex-wrap relative">
+        <div className="flex flex-row md:items-center gap-4 flex-wrap relative">
           <div className="relative w-full md:max-w-[210px]">
             <input
               type="text"
@@ -182,7 +182,7 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
         </div>
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
         {isLoading
           ? Array.from({ length: 24 }).map((_, idx) => <SkeletonCard key={idx} />)
           : posts.map(post => (
@@ -199,7 +199,7 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
                 </div>
                 <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
                   {post.postVideos.length > 0 && (
-                    <span className="bg-[#4C6E49] text-white text-[10px] font-semibold px-2 py-[1px] rounded-full shadow w-[40px]">
+                    <span className="bg-[#4C6E49] text-white text-[10px] font-semibold px-2 py-[1px] rounded-full shadow w-[46px]">
                       {post.postVideos.length} ep
                     </span>
                   )}

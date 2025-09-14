@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { prisma } from "@/lib/prisma"
 import DetailVideo from "@/components/DetailVideo"
 import AgeRatingModalClient from "@/components/modal/AgeRatingModalClient"
+import DeskripsiMobile from "@/components/DeskripsiMobile"
 
 export default async function DetailAnimePage({ params }: {params : Promise<{slug : string}>}) {
   const slug = (await params).slug
@@ -30,61 +31,99 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
 
   return (
     <>
-    <div className="min-h-screen bg-[#1C2029]">
+    <div className="min-h-screen w-full bg-[#1C2029]">
        <AgeRatingModalClient rating={post.rating} description={"Pastikan Anda sudah cukup umur untuk mengakses anime ini"} />
-    <div className="relative mx-auto px-4 py-8 sm:px-6 lg:px-8 h-[500px] sm:h-[480px]">
-      <Image
-        src={post.imageBanner}
-        fill
-        alt={post.title}
-        className="object-cover brightness-[10%]"
-      />
-      <div className="absolute top-10 sm:top-10 w-[400px] sm:w-[1000px]">
-        <h1 className="font-bold font-space-mono text-white text-5xl tracking-wide">{post.title}</h1>
+    <div className="relative px-0 py-8 sm:px-6 lg:px-8 h-[500px] sm:h-[480px] w-full">
+  <Image
+    src={post.imageBanner}
+    fill
+    alt={post.title}
+    className="object-cover brightness-[10%]"
+  />
 
-        <div className="flex flex-row flex-wrap space-x-1.5 mt-3">
-          {post.genres.map(({ genre }) => (
-            <Badge key={genre.id} className="bg-[#4c6e49] font-poppins font-bold uppercase">
-              {genre.name}
-            </Badge>
-          ))}
-        </div>
+  {/* Konten overlay */}
+  <div className="absolute top-10 left-0 right-0 max-w-screen-md px-4 sm:px-6">
+    {/* Title */}
+    <h1 className="font-bold font-space-mono text-white 
+                   text-3xl sm:text-4xl md:text-5xl tracking-wide mb-2">
+      {post.title}
+    </h1>
 
-        <div className="h-[142px]">
-          <p className="text-white font-poppins text-justify mt-4">
-            {post.deskripsi}
-          </p>
-        </div>
+    {/* Genres */}
+    <div className="flex flex-row flex-wrap gap-1.5 w-full">
+      {post.genres.map(({ genre }) => (
+        <Badge
+          key={genre.id}
+          className="bg-[#4c6e49] font-poppins font-bold uppercase mt-2 sm:mt-3"
+        >
+          {genre.name}
+        </Badge>
+      ))}
+    </div>
 
-        {/* Studios */}
-        <div className="hidden sm:flex flex-col space-y-2 mt-4">
-          <h1 className="text-white font-space-mono font-bold text-lg">Studio:</h1>
-          <div className="flex flex-row space-x-1.5">
-            {post.studios.map(({ studio }) => (
-              <Badge key={studio.id} className="bg-[#4c6e49]">
-                {studio.name}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* Source */}
-        <div className="hidden sm:flex flex-col mb-5 mt-5">
-          <h1 className="text-white font-space-mono font-bold text-lg mb-2">Source:</h1>
-          <div className="flex flex-row space-x-3">
-              <a href={post.source[0]} target="_blank">
-                <Image className="h-9 w-[100px] bg-[#181f29] rounded-2xl" src="/images/anilist-ico.svg" alt="Anilist" width={200} height={400} />
-              </a>
-              <a href={post.source[1]} target="_blank">
-                <Image className="h-9 w-[100px] bg-[#2c51a2] rounded-2xl" src="/images/mal-ico.svg" alt="MyAnimeList" width={200} height={400} />
-              </a>
-              <a href={post.source[2]} target="_blank">
-                <Image className="h-9 w-[100px] bg-[#2a3147] rounded-2xl" src="/images/anidb-ico.svg" alt="AniDB" width={200} height={400} />
-              </a>
-          </div>
-        </div>
+    {/* Description */}
+    <div className="mt-4">
+      <div className="block xl:hidden">
+        <DeskripsiMobile deskripsi={post.deskripsi} />
+      </div>
+      <div className="hidden xl:block w-full xl:w-[1300px]">
+        <p className="text-white font-poppins text-justify text-sm sm:text-base md:text-lg">
+          {post.deskripsi}
+        </p>
       </div>
     </div>
+
+    {/* Studios */}
+    <div className="flex flex-col space-y-2 mt-4">
+      <h1 className="text-white font-space-mono font-bold text-sm sm:text-lg">
+        Studio:
+      </h1>
+      <div className="flex flex-row flex-wrap gap-1.5">
+        {post.studios.map(({ studio }) => (
+          <Badge key={studio.id} className="bg-[#4c6e49]">
+            {studio.name}
+          </Badge>
+        ))}
+      </div>
+    </div>
+
+    {/* Source */}
+    <div className="flex flex-col mt-5 mb-5">
+      <h1 className="text-white font-space-mono font-bold text-sm sm:text-lg mb-2">
+        Source:
+      </h1>
+      <div className="flex flex-row gap-3">
+        <a href={post.source[0]} target="_blank">
+          <Image
+            className="h-6 sm:h-9 w-20 sm:w-24 md:w-28 bg-[#181f29] rounded-2xl"
+            src="/images/anilist-ico.svg"
+            alt="Anilist"
+            width={200}
+            height={400}
+          />
+        </a>
+        <a href={post.source[1]} target="_blank">
+          <Image
+            className="h-6 sm:h-9 w-20 sm:w-24 md:w-28 bg-[#2c51a2] rounded-2xl"
+            src="/images/mal-ico.svg"
+            alt="MyAnimeList"
+            width={200}
+            height={400}
+          />
+        </a>
+        <a href={post.source[2]} target="_blank">
+          <Image
+            className="h-6 sm:h-9 w-20 sm:w-24 md:w-28 bg-[#2a3147] rounded-2xl"
+            src="/images/anidb-ico.svg"
+            alt="AniDB"
+            width={200}
+            height={400}
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
  {post.postVideos.length === 0 ? (
      <div className="flex flex-col items-center justify-center py-20 text-center text-white">
@@ -95,7 +134,7 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
       </p>
     </div>
 ) : (
-  <DetailVideo dataVideo={post.postVideos} />
+    <DetailVideo dataVideo={post.postVideos} />
 )}
 </div>
 </>

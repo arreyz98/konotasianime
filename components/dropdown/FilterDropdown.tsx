@@ -32,7 +32,7 @@ const FilterDropdown: React.FC<CustomDropdownProps> = ({
   };
 
   return (
-    <div className="relative w-[200px]">
+    <div className="relative w-[120px] sm:w-[120px] md:[200px]">
       {/* Tombol utama */}
       <button
         type="button"
