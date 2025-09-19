@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma"
 import DetailVideo from "@/components/DetailVideo"
 import AgeRatingModalClient from "@/components/modal/AgeRatingModalClient"
 import DeskripsiMobile from "@/components/DeskripsiMobile"
+import Link from "next/link"
 
 export default async function DetailAnimePage({ params }: {params : Promise<{slug : string}>}) {
   const slug = (await params).slug
@@ -52,12 +53,13 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
     {/* Genres */}
     <div className="flex flex-row flex-wrap gap-1.5 w-full">
       {post.genres.map(({ genre }) => (
-        <Badge
-          key={genre.id}
-          className="bg-[#4c6e49] font-poppins font-bold uppercase mt-2 sm:mt-3"
-        >
-          {genre.name}
-        </Badge>
+        <Link href={`/anime/search?genre=${genre.name}`} key={genre.id} target="_blank">
+          <Badge
+            className="bg-[#4c6e49] font-poppins font-bold uppercase mt-2 sm:mt-3"
+          >
+            {genre.name}
+          </Badge>
+        </Link>
       ))}
     </div>
 
@@ -80,9 +82,11 @@ export default async function DetailAnimePage({ params }: {params : Promise<{slu
       </h1>
       <div className="flex flex-row flex-wrap gap-1.5">
         {post.studios.map(({ studio }) => (
-          <Badge key={studio.id} className="bg-[#4c6e49]">
-            {studio.name}
-          </Badge>
+          <Link href={`/anime/search?studio=${studio.name}`} key={studio.id} target="_blank">
+            <Badge className="bg-[#4c6e49]">
+              {studio.name}
+            </Badge>
+          </Link>
         ))}
       </div>
     </div>

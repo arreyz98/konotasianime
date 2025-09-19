@@ -4,14 +4,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 import { useState, useEffect, useCallback } from 'react'
-import { Search, X, ChevronLeft, ChevronRight} from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import FilterDropdown from './dropdown/FilterDropdown'
 
 interface Post {
   id: string
   slug: string
   title: string
-  rating : string
+  rating: string
   imagePoster: string
   postVideos: { id: string }[]
 }
@@ -26,13 +27,12 @@ interface Studio {
   name: string
 }
 
-
 const optionsSortBy = [
-  {name : "Most Relevance"},
-  {name : "Newest"},
-  {name : "Oldest"},
-  {name : "A-Z"},
-  {name : "Z-A"},
+  { name: 'Most Relevance' },
+  { name: 'Newest' },
+  { name: 'Oldest' },
+  { name: 'A-Z' },
+  { name: 'Z-A' },
 ]
 
 const SkeletonCard = () => (
@@ -46,71 +46,79 @@ const SkeletonCard = () => (
 )
 
 export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string }) {
+  const searchParams = useSearchParams()
+
+  // 🔹 Ambil dari URL query
+  const urlGenre = searchParams.get('genre') || ''
+  const urlStudio = searchParams.get('studio') || ''
+  const urlQuery = searchParams.get('q') || initialQuery
+
   const [posts, setPosts] = useState<Post[]>([])
   const [genres, setGenres] = useState<Genre[]>([])
   const [studios, setStudios] = useState<Studio[]>([])
-  const [searchInput, setSearchInput] = useState(initialQuery)
-  const [genreFilter, setGenreFilter] = useState("")
-  const [studioFilter, setStudioFilter] = useState("")
-  const [sortOrder, setSortOrder] = useState("Most relevance")
+  const [searchInput, setSearchInput] = useState(urlQuery)
+  const [genreFilter, setGenreFilter] = useState(urlGenre)
+  const [studioFilter, setStudioFilter] = useState(urlStudio)
+  const [sortOrder, setSortOrder] = useState('Most Relevance')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchPosts = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const params = new URLSearchParams();
-      if (searchInput) params.append('q', searchInput);
-      if (genreFilter) params.append('genre', genreFilter);
-      if (studioFilter) params.append('studio', studioFilter);
+      const params = new URLSearchParams()
+      if (searchInput) params.append('q', searchInput)
+      if (genreFilter) params.append('genre', genreFilter)
+      if (studioFilter) params.append('studio', studioFilter)
 
       switch (sortOrder) {
         case 'Newest':
-          params.append('sort', 'desc');
-          break;
+          params.append('sort', 'desc')
+          break
         case 'Oldest':
-          params.append('sort', 'asc');
-          break;
+          params.append('sort', 'asc')
+          break
         case 'A-Z':
-          params.append('sort', 'az');
-          break;
+          params.append('sort', 'az')
+          break
         case 'Z-A':
-          params.append('sort', 'za');
-          break;
+          params.append('sort', 'za')
+          break
       }
 
-      params.append('page', currentPage.toString());
+      params.append('page', currentPage.toString())
 
-      const res = await fetch(`/api/user/posts/search-post?${params.toString()}`);
-      const data = await res.json();
-      setPosts(data.posts);
-      setTotalPages(data.totalPages);
+      const res = await fetch(`/api/user/posts/search-post?${params.toString()}`)
+      const data = await res.json()
+      setPosts(data.posts)
+      setTotalPages(data.totalPages)
     } catch (error) {
-      console.error("Gagal memuat data:", error);
+      console.error('Gagal memuat data:', error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }, [searchInput, genreFilter, studioFilter, sortOrder, currentPage])
 
+  // 🔹 Refetch ketika filter berubah
   useEffect(() => {
     const timeout = setTimeout(() => {
-      fetchPosts();
-    }, 500);
-
-    return () => clearTimeout(timeout);
+      fetchPosts()
+    }, 500)
+    return () => clearTimeout(timeout)
   }, [fetchPosts])
 
+  // 🔹 Fetch genre & studio untuk dropdown
   useEffect(() => {
     const fetchFilters = async () => {
       try {
         const [genreRes, studioRes] = await Promise.all([
           fetch('/api/admin/genres/all'),
-          fetch('/api/admin/studios/all')
+          fetch('/api/admin/studios/all'),
         ])
         const [genreData, studioData] = await Promise.all([
           genreRes.json(),
-          studioRes.json()
+          studioRes.json(),
         ])
         setGenres(genreData)
         setStudios(studioData)
@@ -123,20 +131,23 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
 
   const handleResetFilters = () => {
     setSearchInput('')
-    setSortOrder('Most relevance')
+    setSortOrder('Most Relevance')
     setGenreFilter('')
     setStudioFilter('')
     setCurrentPage(1)
   }
 
-  const hasFilter = searchInput || genreFilter || studioFilter || sortOrder !== 'Most relevance';
-
-  
+  const hasFilter =
+    searchInput || genreFilter || studioFilter || sortOrder !== 'Most Relevance'
 
   return (
     <div className="space-y-8 bg-[#1C2029] px-4 py-2 min-h-screen">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
-        <h1 className="text-white text-3xl font-bold tracking-tight">Temukan Anime Favoritmu</h1>
+        <h1 className="text-white text-3xl font-bold tracking-tight">
+          Temukan Anime Favoritmu
+        </h1>
+
+        {/* 🔎 Filter & Search */}
         <div className="flex flex-row md:items-center gap-4 flex-wrap relative">
           <div className="relative w-full md:max-w-[210px]">
             <input
@@ -149,27 +160,26 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
             <Search className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
           </div>
 
+          <FilterDropdown
+            label="Genre"
+            value={genreFilter}
+            onChange={setGenreFilter}
+            options={genres.map((g) => ({ value: g.name, label: g.name }))}
+          />
 
           <FilterDropdown
-           label="Genre"
-          value={genreFilter}
-          onChange={setGenreFilter}
-          options={genres.map((g) => ({ value: g.name, label: g.name }))}
-           />
-           
-          <FilterDropdown
-           label="Studio"
-          value={studioFilter}
-          onChange={setStudioFilter}
-          options={studios.map((g) => ({ value: g.name, label: g.name }))}
-           />
+            label="Studio"
+            value={studioFilter}
+            onChange={setStudioFilter}
+            options={studios.map((g) => ({ value: g.name, label: g.name }))}
+          />
 
           <FilterDropdown
-           label="Sort By"
-          value={sortOrder}
-          onChange={setSortOrder}
-          options={optionsSortBy.map((g) => ({ value: g.name, label: g.name }))}
-           />
+            label="Sort By"
+            value={sortOrder}
+            onChange={setSortOrder}
+            options={optionsSortBy.map((g) => ({ value: g.name, label: g.name }))}
+          />
 
           {hasFilter && (
             <button
@@ -182,11 +192,16 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
         </div>
       </div>
 
+      {/* 🔹 Grid Anime */}
       <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
         {isLoading
           ? Array.from({ length: 24 }).map((_, idx) => <SkeletonCard key={idx} />)
-          : posts.map(post => (
-              <Link href={`/anime/${post.slug}`} key={post.id} className="relative group rounded-xl overflow-hidden shadow-md hover:shadow-lg hover:scale-[1.02] transition duration-300 bg-[#1a1a1d] animate-fade-in">
+          : posts.map((post) => (
+              <Link
+                href={`/anime/${post.slug}`}
+                key={post.id}
+                className="relative group rounded-xl overflow-hidden shadow-md hover:shadow-lg hover:scale-[1.02] transition duration-300 bg-[#1a1a1d] animate-fade-in"
+              >
                 <div className="aspect-[2/3] w-full relative">
                   <Image
                     src={post.imagePoster}
@@ -203,36 +218,57 @@ export default function AnimeGrid({ initialQuery = '' }: { initialQuery?: string
                       {post.postVideos.length} ep
                     </span>
                   )}
-                  <span className={clsx(`text-white text-[10px] font-semibold uppercase px-2 py-[1px] rounded-full shadow`,{
-                    'bg-[#FFC107]' : post.rating === "Remaja",
-                    'bg-[#4CAF50]' : post.rating === "Anak & Bimbingan",
-                    'bg-[#C62828]' : post.rating === "Dewasa Berat",
-                    'bg-[#FF7043]' : post.rating === "Dewasa Ringan"
-                  })}>
-                      {post.rating}
+                  <span
+                    className={clsx(
+                      `text-white text-[10px] font-semibold uppercase px-2 py-[1px] rounded-full shadow`,
+                      {
+                        'bg-[#FFC107]': post.rating === 'Remaja',
+                        'bg-[#4CAF50]': post.rating === 'Anak & Bimbingan',
+                        'bg-[#C62828]': post.rating === 'Dewasa Berat',
+                        'bg-[#FF7043]': post.rating === 'Dewasa Ringan',
+                      }
+                    )}
+                  >
+                    {post.rating}
                   </span>
                 </div>
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#1C2029] via-[#1C2029]/70 to-transparent p-2">
-                  <h3 className="text-white text-xs font-medium line-clamp-2">{post.title}</h3>
+                  <h3 className="text-white text-xs font-medium line-clamp-2">
+                    {post.title}
+                  </h3>
                 </div>
               </Link>
             ))}
       </div>
 
+      {/* 🔹 Pagination */}
       {!isLoading && totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 pt-10">
-          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="bg-[#4C6E49] text-white px-3 py-2 rounded disabled:opacity-50">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="bg-[#4C6E49] text-white px-3 py-2 rounded disabled:opacity-50"
+          >
             <ChevronLeft size={18} />
           </button>
-          <span className="text-white text-sm">Page {currentPage} of {totalPages}</span>
-          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="bg-[#4C6E49] text-white px-3 py-2 rounded disabled:opacity-50">
+          <span className="text-white text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="bg-[#4C6E49] text-white px-3 py-2 rounded disabled:opacity-50"
+          >
             <ChevronRight size={18} />
           </button>
         </div>
       )}
 
+      {/* 🔹 Tidak ada data */}
       {!isLoading && posts.length === 0 && (
-        <div className="text-white text-center mt-10 text-lg font-semibold">Tidak ada anime ditemukan.</div>
+        <div className="text-white text-center mt-10 text-lg font-semibold">
+          Tidak ada anime ditemukan.
+        </div>
       )}
     </div>
   )

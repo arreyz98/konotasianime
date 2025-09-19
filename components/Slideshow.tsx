@@ -93,8 +93,15 @@ const Slideshow = ({
     )
   }
 
+  function truncateWords(text: string, wordLimit: number) {
+    const words = text.split(" ");
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
+  }
+
   return (
-     <div className="relative min-h-[280px] sm:min-h-0 sm:h-[32.25vw] bg-black overflow-hidden">
+     <div className="relative min-h-[280px] sm:min-h-0 sm:h-[32.25vw] lg:h-[56.25vw] xl:h-[42.25vw] 2xl:h-[32.25vw] bg-black overflow-hidden">
       <PreloadImages images={slides.map((s) => s.imageUrl)} />
         <AnimatePresence mode="wait" initial={false}>
          <motion.div
@@ -141,7 +148,7 @@ const Slideshow = ({
         {/* TEXT */}
         <div
           className="
-            flex flex-col justify-center items-center sm:items-baseline 
+            flex flex-col justify-center lg:justify-normal xl:justify-center items-center sm:items-baseline 
             w-full md:w-[70%]
             h-full
             min-h-[220px] sm:min-h-0
@@ -155,7 +162,7 @@ const Slideshow = ({
             animate="animate"
             exit="exit"
             transition={textFadeUp.transition}
-            className="text-white text-3xl xs:text-3xl sm:text-4xl md:text-6xl font-bold leading-tight font-space-mono mb-4 sm:mb-6 drop-shadow-lg"
+            className="text-white text-3xl xs:text-3xl sm:text-4xl md:text-4xl lg:text-6xl font-bold leading-tight font-space-mono mb-4 sm:mb-6 drop-shadow-lg"
           >
             {slides[currentSlide].title}
           </motion.h1>
@@ -166,14 +173,14 @@ const Slideshow = ({
             animate="animate"
             exit="exit"
             transition={{ ...textFadeUp.transition, delay: 0.1 }}
-            className="hidden sm:block text-sm md:text-base text-gray-300 leading-relaxed font-poppins text-justify mb-4 sm:mb-6"
+            className="hidden lg:block text-sm md:text-base text-gray-300 leading-relaxed font-poppins text-justify line-clamp-2 mb-4 sm:mb-6"
           >
-            {slides[currentSlide].description}
+          {truncateWords(slides[currentSlide].description, 40)}
           </motion.p>
         </div>
 
         {/* GAMBAR DI SAMPING -- HANYA DI DESKTOP */}
-        <div className="hidden md:block relative w-full md:w-[30%] h-[620px] bg-black overflow-hidden">
+        <div className="hidden md:block relative w-full md:w-[30%] lg:w-[50%] xl:w-[30%] h-[280px] lg:h-[600px] xl:h-[620px] bg-black overflow-hidden">
           <Image
             src={slides[currentSlide].imageUrl}
             alt={slides[currentSlide].imageAlt}
@@ -191,7 +198,7 @@ const Slideshow = ({
 
       {/* Thumbnails (hidden on mobile, show from sm up) */}
       {showDots && slides.length > 1 && (
-        <div className="hidden sm:flex absolute space-x-4 bottom-8 ml-4 md:ml-20 z-30 transition-all duration-500 ease-in-out">
+        <div className="hidden lg:flex absolute space-x-4 bottom-8 ml-4 md:ml-20 z-30 transition-all duration-500 ease-in-out">
           {slides.map((slide, index) => (
             <button
               key={slide.id}

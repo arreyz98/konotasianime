@@ -81,22 +81,22 @@ const paginatedEpisodes = [...dataVideo]
     <div className="grid grid-cols-1 xl:grid-cols-6 gap-4 mt-6 sm:mt-10 px-3 sm:px-6 lg:px-8">
       {/* Video Panel */}
       <div className={`
-        ${currentList === "link resmi" ? "py-0" : "py-6 sm:py-16"} 
+        ${currentList === "link resmi" ? "py-0" : "py-0 sm:py-16"} 
           relative
           col-span-1 px-2 xl:col-span-4
           bg-[#1C2029] border-2 border-[#4C6E49]
-          h-auto sm:h-[700px]
+          h-auto sm:h-[700px] md:h-[520px] lg:h-[720px]
           rounded-2xl
           mt-10 mb-5 w-full
           pt-8 sm:pt-3
         `}
       >
         {/* Tab Switcher */}
-      <div className="absolute -top-8 sm:-top-11 left-4 z-10 flex flex-row space-x-3">
+      <div className="absolute -top-10 sm:-top-11 left-4 z-10 flex flex-row space-x-3">
         <button
           onClick={() => setCurrentList("link resmi")}
           className={`
-            px-4 sm:px-8 py-2
+            px-2 sm:px-8 py-2
             text-white text-sm sm:text-base font-bold font-space-mono
             transition-all
             ${currentList === "link resmi"
@@ -130,23 +130,24 @@ const paginatedEpisodes = [...dataVideo]
       </div>
 
          {currentList === "link resmi" ? (
-    <div className="flex h-full justify-center relative overflow-hidden p-4 sm:p-8">
-      {transformedList.length > 0 ? (
-        <List items={transformedList} />
-      ) : (
-        <p className="text-white text-xs sm:text-sm">Belum ada link resmi untuk video ini.</p>
-      )}
-    </div>
-  ) : selected.linkVideo ? (
-    <div className="aspect-video w-full rounded-lg overflow-hidden">
-      <iframe
-        className="w-full h-full"
-        src={`https://www.youtube.com/embed/${selected.linkVideo}`}
-        allowFullScreen
-        title="Video Youtube"
-      />
-    </div>
-  ) : null}
+  <div className="flex h-full justify-center relative overflow-hidden p-4 sm:p-8">
+    {transformedList.length > 0 ? (
+      <List items={transformedList} />
+    ) : (
+      <p className="text-white text-xs sm:text-sm">Belum ada link resmi untuk video ini.</p>
+    )}
+  </div>
+) : selected.linkVideo ? (
+  <div className="relative w-full h-[300px] sm:h-[500px] lg:h-[700px] rounded-lg overflow-hidden">
+    <iframe
+      className="absolute inset-0 w-full h-full"
+      src={`https://www.youtube.com/embed/${selected.linkVideo}`}
+      allowFullScreen
+      title="Video Youtube"
+    />
+  </div>
+) : null}
+
       </div>
 
       {/* Tab Panel */}
